@@ -1,0 +1,1 @@
+package io.salpiras.starwars.core.domain.usecase

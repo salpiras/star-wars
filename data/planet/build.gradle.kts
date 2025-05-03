@@ -1,0 +1,65 @@
+import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
+
+plugins {
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.ktlint)
+}
+
+android {
+    namespace = "io.salpiras.starwars.data.planet"
+    compileSdk = 35
+
+    defaultConfig {
+        minSdk = 26
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+
+}
+
+ktlint {
+    version = "1.3.1"
+    android = true
+    ignoreFailures = false
+    reporters {
+        reporter(ReporterType.CHECKSTYLE)
+    }
+}
+
+dependencies {
+    ksp(libs.hilt.ext.compiler)
+    ksp(libs.hilt.compiler)
+
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.retrofit.converter.kotlinx.serialization)
+    implementation(libs.hilt.android)
+    implementation(libs.retrofit)
+    implementation(project(":core:network"))
+    implementation(project(":core:model"))
+    implementation(project(":core:domain"))
+
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+}
