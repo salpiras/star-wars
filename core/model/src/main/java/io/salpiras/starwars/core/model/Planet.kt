@@ -1,6 +1,7 @@
 package io.salpiras.starwars.core.model
 
 data class Planet(
+    val uid: String,
     val name: String,
     val population: String,
     val climate: Set<Climate>,

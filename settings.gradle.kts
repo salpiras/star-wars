@@ -20,9 +20,9 @@ dependencyResolutionManagement {
 
 rootProject.name = "StarWars"
 include(":app")
-include(":core")
 include(":core:network")
 include(":core:model")
-include(":data")
 include(":data:planet")
 include(":core:domain")
+include(":feature:planet-list")
+include(":core:design")

@@ -3,6 +3,7 @@ import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.ktlint)
@@ -55,9 +56,12 @@ dependencies {
     implementation(libs.retrofit.converter.kotlinx.serialization)
     implementation(libs.hilt.android)
     implementation(libs.retrofit)
+    implementation(libs.kotlinx.coroutines.core)
     implementation(project(":core:network"))
     implementation(project(":core:model"))
     implementation(project(":core:domain"))
+    api(project(":core:domain"))
+    api(project(":core:model"))
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

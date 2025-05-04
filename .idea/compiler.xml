@@ -9,6 +9,8 @@
       <module name="StarWars.core.main" target="11" />
       <module name="StarWars.core.network.test" target="11" />
       <module name="StarWars.core.test" target="11" />
+      <module name="StarWars.feature.main" target="11" />
+      <module name="StarWars.feature.test" target="11" />
       <module name="StarWars.network" target="11" />
       <module name="StarWars.network.main" target="11" />
       <module name="StarWars.network.test" target="11" />

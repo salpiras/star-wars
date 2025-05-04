@@ -18,5 +18,4 @@ data class PlanetSummaryDto(
     val uid:  String,
     val name: String,
     val url:  String,
-    @SerialName("__v") val version: Int
 )
