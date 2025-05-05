@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -45,41 +46,46 @@ fun PlanetDestination(
 
 @Composable
 fun PlanetView(planet: PlanetUiOverview) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.CenterVertically),
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp)
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
+    Scaffold { padding ->
+        Column(
+            verticalArrangement = Arrangement.spacedBy(
+                8.dp,
+                alignment = Alignment.CenterVertically
+            ),
             modifier = Modifier
-                .defaultMinSize(minHeight = 120.dp)
-                .fillMaxWidth()
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
         ) {
-            Text(
-                text = planet.name,
-                style = Typography.headlineLarge
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .defaultMinSize(minHeight = 120.dp)
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    text = planet.name,
+                    style = Typography.headlineLarge
+                )
+            }
+            InfoRow(
+                label = "Population",
+                value = planet.population?.toString() ?: "Unknown",
+                modifier = Modifier.padding(vertical = 8.dp)
             )
+            InfoRow(
+                label = "Diameter",
+                value = planet.diameter?.toString() ?: "Unknown",
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+            InfoRow(
+                label = "Gravity",
+                value = planet.gravity.toString(),
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+            Spacer(modifier = Modifier.size(16.dp))
+            InfoSetView(label = "Climate", values = planet.climate)
+            InfoSetView(label = "Terrain", values = planet.terrain)
         }
-        InfoRow(
-            label = "Population",
-            value = planet.population?.toString() ?: "Unknown",
-            modifier = Modifier.padding(vertical = 8.dp)
-        )
-        InfoRow(
-            label = "Diameter",
-            value = planet.diameter?.toString() ?: "Unknown",
-            modifier = Modifier.padding(vertical = 8.dp)
-        )
-        InfoRow(
-            label = "Gravity",
-            value = planet.gravity.toString(),
-            modifier = Modifier.padding(vertical = 8.dp)
-        )
-        Spacer(modifier = Modifier.size(16.dp))
-        InfoSetView(label = "Climate", values = planet.climate)
-        InfoSetView(label = "Terrain", values = planet.terrain)
     }
 }
 
