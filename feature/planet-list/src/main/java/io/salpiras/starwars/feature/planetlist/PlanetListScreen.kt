@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -32,6 +33,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import io.salpiras.core.design.theme.StarWarsTheme
 import io.salpiras.core.design.theme.Typography
 
@@ -49,11 +55,7 @@ fun PlanetListDestination(
         viewModel.refreshState.collect { state ->
             when (state) {
                 is UiEvent.RefreshError -> {
-                    snackbarHostState.showSnackbar("Refresh error")
-                }
-
-                is UiEvent.RefreshStarted -> {
-                    snackbarHostState.showSnackbar("Loading more entries..")
+                    snackbarHostState.showSnackbar("Refresh error. ${state.message ?: ""}")
                 }
             }
         }
@@ -85,7 +87,6 @@ fun PlanetListDestination(
     }
 }
 
-// TODO: add uiState planet type with stable.
 @Composable
 fun PlanetListView(
     planets: List<PlanetUiItem>,
@@ -152,14 +153,25 @@ fun PlanetListItem(
     }
 }
 
-// TODO: add lottie animation
 @Composable
 fun LoadingView() {
+    val composition by rememberLottieComposition(
+        LottieCompositionSpec.Asset("loading.json")
+    )
+    val progress by animateLottieCompositionAsState(
+        composition,
+        iterations = LottieConstants.IterateForever
+    )
+
     Box(
         modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
+        contentAlignment = Alignment.Center
     ) {
-        CircularProgressIndicator()
+        LottieAnimation(
+            composition = composition,
+            progress = { progress },
+            modifier = Modifier.size(150.dp)
+        )
     }
 }
 

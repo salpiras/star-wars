@@ -44,10 +44,9 @@ class PlanetListViewModel @Inject constructor(
 
     fun loadData() {
         viewModelScope.launch {
-            _refreshState.emit(UiEvent.RefreshStarted)
-            when (getPlanetsUseCase()) {
+            when (val result = getPlanetsUseCase()) {
                 is OpResult.Error -> {
-                    _refreshState.emit(UiEvent.RefreshError)
+                    _refreshState.emit(UiEvent.RefreshError(result.message))
                 }
 
                 else -> {}
@@ -61,7 +60,7 @@ private fun Planet.toListItem(): PlanetUiItem =
         uid = uid,
         name = name,
         population = population,
-        climate = climate.map { climate -> climate.toString() }.toSet()
+        climate = climate.map { climate -> climate.toString().replace("_", " ") }.toSet()
     )
 
 private fun List<Planet>.toListItems(): List<PlanetUiItem> = this.map { it -> it.toListItem() }

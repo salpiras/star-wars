@@ -35,8 +35,8 @@ private fun Planet.toOverview(): PlanetUiOverview =
     PlanetUiOverview(
         name = name,
         population = population,
-        climate = climate.map { climate -> climate.toString() }.toSet(),
+        climate = climate.map { climate -> climate.toString().replace("_", " ") }.toSet(),
         diameter = diameter,
         gravity = gravity,
-        terrain = terrain.map { terrain -> terrain.toString() }.toSet()
+        terrain = terrain.map { terrain -> terrain.toString().replace("_", " ") }.toSet()
     )

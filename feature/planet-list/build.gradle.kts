@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation.compose)
     implementation(libs.kotlin.serialization.json)
+    implementation(libs.lottie.compose)
     implementation(project(":core:design"))
     implementation(project(":data:planet"))
 

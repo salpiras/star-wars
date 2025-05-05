@@ -11,8 +11,7 @@ sealed interface PlanetListUiState {
 }
 
 sealed interface UiEvent {
-    data object RefreshError : UiEvent
-    data object RefreshStarted : UiEvent
+    data class RefreshError(val message: String?) : UiEvent
 }
 
 @Stable

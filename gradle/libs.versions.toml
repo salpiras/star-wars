@@ -30,6 +30,7 @@ turbine = "1.2.0"
 mockk = "1.14.0"
 gson = "2.11.0"
 javaxInject = "1"
+lottieCompose = "5.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -95,6 +96,8 @@ androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx",
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 mock = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 
+#Lottie compose
+lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottieCompose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
