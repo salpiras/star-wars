@@ -6,6 +6,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface PlanetRepository {
 
+    fun observePlanet(planetId: String): Flow<Planet>
+
     fun observePlanets(): Flow<List<Planet>>
 
     suspend fun refreshPlanets(page: Int = 1): OpResult

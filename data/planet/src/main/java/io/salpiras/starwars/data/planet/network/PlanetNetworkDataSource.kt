@@ -45,22 +45,12 @@ class PlanetNetworkDataSource @Inject constructor(private val api: PlanetApiServ
     }
 }
 
-private fun PlanetDto.toDomain(uid: String): Planet {
-    // parse diameter: if it’s not a valid Long, treat as “unknown”
-    val diameterValue: Long? = diameter.toLongOrNull()
-    val diameterModel = if (diameterValue != null) {
-        Diameter(diameterValue, isKnown = true)
-    } else {
-        Diameter(value = 0L, isKnown = false)
-    }
-
-    return Planet(
-        uid = uid,
-        name = name,
-        population = population,
-        climate = Climate.parseAll(climate),
-        diameter = diameterModel,
-        gravity = gravity,
-        terrain = Terrain.parseAll(terrain)
-    )
-}
+private fun PlanetDto.toDomain(uid: String): Planet = Planet(
+    uid = uid,
+    name = name,
+    population = population.toLongOrNull(),
+    climate = Climate.parseAll(climate),
+    diameter = diameter.toLongOrNull(),
+    gravity = gravity,
+    terrain = Terrain.parseAll(terrain)
+)

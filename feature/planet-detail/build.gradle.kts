@@ -1,7 +1,5 @@
-import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
-
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
@@ -11,17 +9,14 @@ plugins {
 }
 
 android {
-    namespace = "io.salpiras.starwars"
+    namespace = "io.salpiras.starwars.feature.planetdetail"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "io.salpiras.starwars"
         minSdk = 26
-        targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
@@ -39,18 +34,6 @@ android {
     }
     kotlinOptions {
         jvmTarget = "11"
-    }
-    buildFeatures {
-        compose = true
-    }
-}
-
-ktlint {
-    version = "1.3.1"
-    android = true
-    ignoreFailures = false
-    reporters {
-        reporter(ReporterType.CHECKSTYLE)
     }
 }
 
@@ -70,9 +53,8 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation.compose)
     implementation(libs.kotlin.serialization.json)
-    implementation(project(":feature:planet-list"))
-    implementation(project(":feature:planet-detail"))
     implementation(project(":core:design"))
+    implementation(project(":data:planet"))
 
     testImplementation(libs.junit)
 

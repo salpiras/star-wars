@@ -18,6 +18,7 @@
             <option value="$PROJECT_DIR$/data" />
             <option value="$PROJECT_DIR$/data/planet" />
             <option value="$PROJECT_DIR$/feature" />
+            <option value="$PROJECT_DIR$/feature/planet-detail" />
             <option value="$PROJECT_DIR$/feature/planet-list" />
           </set>
         </option>
