@@ -9,16 +9,23 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -51,6 +58,11 @@ fun PlanetListDestination(
     viewModel: PlanetListViewModel = hiltViewModel(),
     onPlanetSelected: (String) -> Unit
 ) {
+
+    LaunchedEffect(Unit) {
+        viewModel.loadData()
+    }
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -85,7 +97,7 @@ fun PlanetListDestination(
                     onPlanetSelected = onPlanetSelected
                 )
 
-                PlanetListUiState.Error -> ErrorView()
+                is PlanetListUiState.Error -> ErrorView()
             }
         }
     }
@@ -191,9 +203,24 @@ fun LoadingView() {
 fun ErrorView() {
     Box(
         modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
+        contentAlignment = Alignment.Center
     ) {
-        Text(text = "Error!")
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.Warning,
+                contentDescription = "Error",
+                tint = MaterialTheme.colorScheme.error,
+                modifier = Modifier.size(64.dp)
+            )
+            Spacer(Modifier.height(16.dp))
+            Text(
+                text = "Unable to load planets",
+                style = Typography.headlineSmall
+            )
+        }
     }
 }
 

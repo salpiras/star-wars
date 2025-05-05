@@ -8,11 +8,17 @@ import io.salpiras.starwars.core.domain.usecase.ObservePlanetsUseCase
 import io.salpiras.starwars.core.model.OpResult
 import io.salpiras.starwars.core.model.Planet
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -20,33 +26,43 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PlanetListViewModel @Inject constructor(
-    observePlanetsUseCase: ObservePlanetsUseCase,
+    private val observePlanetsUseCase: ObservePlanetsUseCase,
     private val getPlanetsUseCase: GetPlanetsUseCase
 ) : ViewModel() {
 
     private val _refreshState: MutableSharedFlow<UiEvent> = MutableSharedFlow()
     val refreshState: SharedFlow<UiEvent> = _refreshState.asSharedFlow()
 
-    val uiState: StateFlow<PlanetListUiState> = observePlanetsUseCase()
-        .map { it ->
-            if (it.isEmpty()) {
-                PlanetListUiState.Loading
-            } else {
-                PlanetListUiState.Loaded(data = it.toListItems()) // TODO: check if we can add to it at each page
+    private val _uiState: MutableStateFlow<PlanetListUiState> =
+        MutableStateFlow(PlanetListUiState.Loading)
+    val uiState: StateFlow<PlanetListUiState> = _uiState.asStateFlow()
+
+    init {
+        observePlanets()
+    }
+
+    private fun observePlanets() {
+        observePlanetsUseCase.invoke()
+            .onEach { it ->
+                if (it.isNotEmpty()) {
+                    _uiState.value = PlanetListUiState.Loaded(data = it.toListItems())
+                }
             }
-        }.onStart {
-            loadData()
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = PlanetListUiState.Loading,
-        )
+            .catch {
+                _uiState.value = PlanetListUiState.Error
+            }
+            .launchIn(viewModelScope)
+    }
 
     fun loadData() {
         viewModelScope.launch {
             when (val result = getPlanetsUseCase()) {
                 is OpResult.Error -> {
-                    _refreshState.emit(UiEvent.RefreshError(result.message))
+                    if (uiState.value !is PlanetListUiState.Loaded) {
+                        _uiState.value = PlanetListUiState.Error
+                    } else {
+                        _refreshState.emit(UiEvent.RefreshError(result.message))
+                    }
                 }
 
                 else -> {}
