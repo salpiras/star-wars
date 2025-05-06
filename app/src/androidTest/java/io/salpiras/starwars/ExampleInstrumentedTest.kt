@@ -22,3 +22,5 @@ class ExampleInstrumentedTest {
         assertEquals("io.salpiras.starwars", appContext.packageName)
     }
 }
+
+// TODO: write navigator test.

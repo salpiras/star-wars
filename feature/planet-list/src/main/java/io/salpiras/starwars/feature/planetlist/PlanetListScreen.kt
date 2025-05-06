@@ -21,8 +21,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -39,9 +37,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.airbnb.lottie.compose.LottieAnimation
@@ -49,6 +47,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
+import io.salpiras.core.design.theme.Dimensions
 import io.salpiras.core.design.theme.StarWarsTheme
 import io.salpiras.core.design.theme.Typography
 
@@ -62,12 +61,13 @@ fun PlanetListDestination(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val snackbarHostState = remember { SnackbarHostState() }
+    val errorMessage = stringResource(R.string.planet_list_error_load)
 
     LaunchedEffect(viewModel.refreshState) {
         viewModel.refreshState.collect { state ->
             when (state) {
                 is UiEvent.RefreshError -> {
-                    snackbarHostState.showSnackbar("Refresh error. ${state.message ?: ""}")
+                    snackbarHostState.showSnackbar("$errorMessage ${state.message ?: ""}")
                 }
             }
         }
@@ -76,7 +76,7 @@ fun PlanetListDestination(
     Scaffold(
         topBar = {
             TopAppBar(title = {
-                Text("Star Wars Planets")
+                Text(stringResource(R.string.planet_list_title))
             })
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
@@ -108,8 +108,8 @@ fun PlanetListView(
     LazyColumn(
         state = listState,
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(vertical = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(Dimensions.dim8),
+        contentPadding = PaddingValues(vertical = Dimensions.dim16),
     ) {
         items(
             items = planets,
@@ -127,7 +127,7 @@ fun PlanetListItem(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClicked(planet.uid) }
-            .padding(horizontal = 16.dp)) {
+            .padding(horizontal = Dimensions.dim16)) {
         Row(verticalAlignment = Alignment.Top) {
             Column(modifier = Modifier.weight(1.0F)) {
                 Text(
@@ -136,7 +136,7 @@ fun PlanetListItem(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .padding(8.dp),
+                            .padding(Dimensions.dim8),
                 )
             }
             FlowRow(
@@ -150,17 +150,18 @@ fun PlanetListItem(
                     style = Typography.labelLarge,
                     modifier =
                         Modifier
-                            .padding(8.dp),
+                            .padding(Dimensions.dim8),
                 )
             }
         }
         Text(
-            text = "Population: ${planet.population?.toString() ?: "Unknown"}", // TODO: localise,
+            text = "${stringResource(R.string.planet_list_population_label)} " +
+                    (planet.population?.toString() ?: stringResource(R.string.planet_list_unknown)),
             style = Typography.labelLarge,
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .padding(8.dp),
+                    .padding(Dimensions.dim8),
         )
     }
 }
@@ -175,13 +176,14 @@ fun LoadingView() {
         iterations = LottieConstants.IterateForever
     )
 
-    Box(
+    Column(
         modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
             modifier = Modifier
-                .size(150.dp)
+                .size(Dimensions.dim180)
                 .clip(CircleShape)
                 .background(Color.White),
             contentAlignment = Alignment.Center
@@ -189,9 +191,15 @@ fun LoadingView() {
             LottieAnimation(
                 composition = composition,
                 progress = { progress },
-                modifier = Modifier.size(150.dp)
+                modifier = Modifier.size(Dimensions.dim150)
             )
         }
+        Spacer(Modifier.height(Dimensions.dim16))
+        Text(
+            text = stringResource(R.string.planet_list_loading),
+            style = Typography.headlineMedium,
+            modifier = Modifier.padding(Dimensions.dim8),
+        )
     }
 }
 
@@ -209,11 +217,11 @@ fun ErrorView() {
                 imageVector = Icons.Default.Warning,
                 contentDescription = "Error",
                 tint = MaterialTheme.colorScheme.error,
-                modifier = Modifier.size(64.dp)
+                modifier = Modifier.size(Dimensions.dim64)
             )
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(Dimensions.dim16))
             Text(
-                text = "Unable to load planets",
+                text = stringResource(R.string.planet_list_error_full),
                 style = Typography.headlineSmall
             )
         }

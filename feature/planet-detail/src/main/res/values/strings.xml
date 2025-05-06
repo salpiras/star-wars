@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="planet_detail_label_population">Population</string>
+    <string name="planet_detail_label_diameter">Diameter</string>
+    <string name="planet_detail_label_gravity">Gravity</string>
+    <string name="planet_detail_label_climate">Climate</string>
+    <string name="planet_detail_label_terrain">Terrain</string>
+    <string name="planet_detail_unknown">Unknown</string>
+</resources>

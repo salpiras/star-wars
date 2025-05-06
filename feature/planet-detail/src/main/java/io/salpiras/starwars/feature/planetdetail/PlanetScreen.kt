@@ -21,15 +21,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
+import io.salpiras.core.design.theme.Dimensions
 import io.salpiras.core.design.theme.StarWarsTheme
 import io.salpiras.core.design.theme.Typography
 
@@ -51,7 +52,7 @@ fun PlanetView(planet: PlanetUiOverview) {
     Scaffold { padding ->
         Column(
             verticalArrangement = Arrangement.spacedBy(
-                8.dp,
+                Dimensions.dim8,
                 alignment = Alignment.CenterVertically
             ),
             modifier = Modifier
@@ -59,12 +60,12 @@ fun PlanetView(planet: PlanetUiOverview) {
                 // Quick fix for landscape mode usability.
                 // Usually in prod apps another layout is provided.
                 .verticalScroll(state = rememberScrollState())
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = Dimensions.dim16)
         ) {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .defaultMinSize(minHeight = 120.dp)
+                    .defaultMinSize(minHeight = Dimensions.dim120)
                     .fillMaxWidth()
             ) {
                 Text(
@@ -73,23 +74,31 @@ fun PlanetView(planet: PlanetUiOverview) {
                 )
             }
             InfoRow(
-                label = "Population",
-                value = planet.population?.toString() ?: "Unknown",
-                modifier = Modifier.padding(vertical = 8.dp)
+                label = stringResource(R.string.planet_detail_label_population),
+                value = planet.population?.toString()
+                    ?: stringResource(R.string.planet_detail_unknown),
+                modifier = Modifier.padding(vertical = Dimensions.dim8)
             )
             InfoRow(
-                label = "Diameter",
-                value = planet.diameter?.toString() ?: "Unknown",
-                modifier = Modifier.padding(vertical = 8.dp)
+                label = stringResource(R.string.planet_detail_label_diameter),
+                value = planet.diameter?.toString()
+                    ?: stringResource(R.string.planet_detail_unknown),
+                modifier = Modifier.padding(vertical = Dimensions.dim8)
             )
             InfoRow(
-                label = "Gravity",
+                label = stringResource(R.string.planet_detail_label_gravity),
                 value = planet.gravity.toString(),
-                modifier = Modifier.padding(vertical = 8.dp)
+                modifier = Modifier.padding(vertical = Dimensions.dim8)
             )
-            Spacer(modifier = Modifier.size(16.dp))
-            InfoSetView(label = "Climate", values = planet.climate)
-            InfoSetView(label = "Terrain", values = planet.terrain)
+            Spacer(modifier = Modifier.size(Dimensions.dim16))
+            InfoSetView(
+                label = stringResource(R.string.planet_detail_label_climate),
+                values = planet.climate
+            )
+            InfoSetView(
+                label = stringResource(R.string.planet_detail_label_terrain),
+                values = planet.terrain
+            )
         }
     }
 }
@@ -128,18 +137,18 @@ fun InfoSetView(label: String, values: Set<String>) {
     Column {
         Text(text = label, style = Typography.headlineSmall)
         FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.padding(vertical = 8.dp)
+            horizontalArrangement = Arrangement.spacedBy(Dimensions.dim8),
+            modifier = Modifier.padding(vertical = Dimensions.dim8)
         ) {
             values.forEach { v ->
                 Box(
                     modifier = Modifier
                         .border(
-                            width = 1.dp,
+                            width = Dimensions.dim1,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            shape = RoundedCornerShape(16.dp)
+                            shape = RoundedCornerShape(Dimensions.dim16)
                         )
-                        .padding(horizontal = 12.dp, vertical = 6.dp)
+                        .padding(horizontal = Dimensions.dim12, vertical = Dimensions.dim8)
                 ) {
                     Text(text = v, style = Typography.labelSmall)
                 }

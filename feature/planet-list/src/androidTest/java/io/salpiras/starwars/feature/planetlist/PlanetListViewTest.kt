@@ -3,6 +3,7 @@ package io.salpiras.starwars.feature.planetlist
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.mockk.coEvery
 import io.salpiras.core.design.theme.StarWarsTheme
@@ -19,6 +20,7 @@ import io.mockk.mockk
 import io.salpiras.starwars.core.domain.usecase.GetPlanetsUseCase
 import io.salpiras.starwars.core.domain.usecase.ObservePlanetsUseCase
 import io.salpiras.starwars.core.model.OpResult
+import junit.framework.TestCase.assertEquals
 
 @RunWith(AndroidJUnit4::class)
 class PlanetListScreenTest {
@@ -58,18 +60,34 @@ class PlanetListScreenTest {
 
     @Test
     fun planetList_showsAllPlanetNames() {
-        composeTestRule.setContent {
-            StarWarsTheme {
-                PlanetListDestination(
-                    viewModel = PlanetListViewModel(observePlanetsUseCase, getPlanetsUseCase),
-                    onPlanetSelected = { /* no-op */ }
-                )
+        composeTestRule.apply {
+            setContent {
+                StarWarsTheme {
+                    PlanetListDestination(
+                        viewModel = PlanetListViewModel(observePlanetsUseCase, getPlanetsUseCase),
+                        onPlanetSelected = { /* no-op */ }
+                    )
+                }
             }
+            composeTestRule.onNodeWithText(fakePlanets[0].name).assertIsDisplayed()
+            composeTestRule.onNodeWithText(fakePlanets[1].name).assertIsDisplayed()
         }
+    }
 
-        composeTestRule.onNodeWithText(fakePlanets[0].name).assertIsDisplayed()
-        composeTestRule.onNodeWithText(fakePlanets[1].name).assertIsDisplayed()
+    @Test
+    fun planetList_onClickPlanet() {
+        composeTestRule.apply {
+            var clickedId: String? = null
+            setContent {
+                StarWarsTheme {
+                    PlanetListDestination(
+                        viewModel = PlanetListViewModel(observePlanetsUseCase, getPlanetsUseCase),
+                        onPlanetSelected = { clickedId = it }
+                    )
+                }
+            }
+            composeTestRule.onNodeWithText(fakePlanets[0].name).performClick()
+            assertEquals(fakePlanets[0].uid, clickedId)
+        }
     }
 }
-
-// TODO: add tap test

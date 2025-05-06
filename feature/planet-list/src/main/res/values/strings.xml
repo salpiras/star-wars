@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="planet_list_title">Star Wars Planets</string>
+    <string name="planet_list_population_label">Population:</string>
+    <string name="planet_list_loading">Loading</string>
+    <string name="planet_list_unknown">Unknown</string>
+    <string name="planet_list_error_load">Error while loading planets.</string>
+    <string name="planet_list_error_full">Unable to load planets.</string>
+</resources>

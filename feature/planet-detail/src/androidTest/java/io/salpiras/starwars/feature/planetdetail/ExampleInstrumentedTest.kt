@@ -22,3 +22,5 @@ class ExampleInstrumentedTest {
         assertEquals("io.salpiras.starwars.feature.planetdetail.test", appContext.packageName)
     }
 }
+
+// TODO: write planet screen test
