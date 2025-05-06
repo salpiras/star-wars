@@ -1,118 +1,94 @@
 package io.salpiras.starwars.feature.planetlist
 
 import app.cash.turbine.test
+import io.mockk.clearAllMocks
 import io.mockk.coEvery
-import io.mockk.every
 import io.mockk.mockk
 import io.salpiras.starwars.core.domain.usecase.GetPlanetsUseCase
 import io.salpiras.starwars.core.domain.usecase.ObservePlanetsUseCase
-import io.salpiras.starwars.core.model.Diameter
+import io.salpiras.starwars.core.model.Climate
 import io.salpiras.starwars.core.model.OpResult
 import io.salpiras.starwars.core.model.Planet
-import io.salpiras.starwars.feature.planetlist.PlanetListUiState
-import io.salpiras.starwars.feature.planetlist.PlanetListViewModel
-import io.salpiras.starwars.feature.planetlist.UiEvent
+import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.*
-import org.junit.*
-import org.junit.rules.TestWatcher
-
-/**
- * Rule to swap Dispatchers.Main to a TestDispatcher
- */
-@OptIn(ExperimentalCoroutinesApi::class)
-class MainDispatcherRule(
-    private val testDispatcher: TestDispatcher = StandardTestDispatcher()
-) : TestWatcher() {
-    override fun starting(description: org.junit.runner.Description?) {
-        Dispatchers.setMain(testDispatcher)
-    }
-    override fun finished(description: org.junit.runner.Description?) {
-        Dispatchers.resetMain()
-    }
-}
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class PlanetListViewModelTest {
 
-    @get:Rule
-    val mainDispatcherRule = MainDispatcherRule()
+    private val testDispatcher = StandardTestDispatcher()
+    private val observePlanetsUseCase: ObservePlanetsUseCase = mockk()
+    private val getPlanetsUseCase: GetPlanetsUseCase = mockk()
 
-    private val observeUseCase: ObservePlanetsUseCase = mockk()
-    private val getUseCase: GetPlanetsUseCase       = mockk()
+    private val fakePlanets = listOf<Planet>(
+        Planet(
+            uid = "1",
+            name = "Tattooine",
+            population = 100000L,
+            climate = setOf(Climate.ARID),
+            diameter = 1000L,
+            gravity = "1 standard",
+            terrain = setOf()
+        )
+    )
 
     @Before
-    fun setup() {
-        // by default, network will error
-        coEvery { getUseCase(any()) } returns OpResult.Error("network down")
+    fun setUp() {
+        Dispatchers.setMain(testDispatcher)
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
+        clearAllMocks()
     }
 
     @Test
-    fun `empty DB and network fails emits Loading then Error, no snackbar`() = runTest {
-        // 1) DB stream starts empty
-        every { observeUseCase() } returns flowOf(emptyList())
+    fun `GIVEN no planets WHEN error refreshing data THEN uiState is error`() = runTest {
+        coEvery { observePlanetsUseCase() } returns flowOf(emptyList())
+        coEvery { getPlanetsUseCase() } returns OpResult.Error("Error!")
 
-        val vm = PlanetListViewModel(observeUseCase, getUseCase)
+        val vm = PlanetListViewModel(observePlanetsUseCase, getPlanetsUseCase)
 
-        // 2) Collect uiState
         vm.uiState.test {
-            // first we should get the initial Loading
             assertEquals(PlanetListUiState.Loading, awaitItem())
 
-            // give onStart { loadData() } a chance to run
-            advanceUntilIdle()
-
-            // now we should see the Error state
             assertEquals(PlanetListUiState.Error, awaitItem())
-            cancelAndIgnoreRemainingEvents()
-        }
-
-        // 3) Because we had no data, refreshState should never fire
-        vm.refreshState.test {
-            expectNoEvents()
-            cancelAndIgnoreRemainingEvents()
+            ensureAllEventsConsumed()
         }
     }
 
     @Test
-    fun `non-empty DB and network fails emits Loaded then Snackbar event`() = runTest {
-        // 1) Fake one planet in the DB
-        val fake = Planet(
-            id         = Planet.Id("42"),
-            name       = "Tatooine",
-            population = "200000",
-            climate    = emptySet(),
-            diameter   = Diameter(10465, true),
-            gravity    = "1 standard",
-            terrain    = emptySet()
-        )
-        every { observeUseCase() } returns MutableStateFlow(listOf(fake))
+    fun `GIVEN planets WHEN success refreshing data THEN correct data retrieved`() = runTest {
+        val planetsFlow = MutableStateFlow(emptyList<Planet>())
+        coEvery { observePlanetsUseCase() } returns planetsFlow
+        coEvery { getPlanetsUseCase() } returns OpResult.Success
 
-        val vm = PlanetListViewModel(observeUseCase, getUseCase)
+        val vm = PlanetListViewModel(observePlanetsUseCase, getPlanetsUseCase)
 
-        // 2) Collect uiState
         vm.uiState.test {
-            // initial Loading
             assertEquals(PlanetListUiState.Loading, awaitItem())
 
-            // DB sends its first value—Loaded
-            advanceUntilIdle() // allow onStart and combine to run
-            val loaded = awaitItem()
-            assertTrue(loaded is PlanetListUiState.Loaded)
-            assertEquals(1, (loaded as PlanetListUiState.Loaded).data.size)
-            assertEquals("Tatooine", loaded.data.first().name)
-            cancelAndIgnoreRemainingEvents()
-        }
+            planetsFlow.emit(fakePlanets)
 
-        // 3) Because we already had data, we should get a transient RefreshError
-        vm.refreshState.test {
-            val evt = awaitItem()
-            assertTrue(evt is UiEvent.RefreshError)
-            assertEquals("network down", (evt as UiEvent.RefreshError).message)
-            cancelAndIgnoreRemainingEvents()
+            val state = awaitItem()
+            assertTrue(state is PlanetListUiState.Loaded)
+            (state as PlanetListUiState.Loaded).apply {
+                assertEquals(data.first().name, fakePlanets.first().name)
+                assertEquals(data.first().population, fakePlanets.first().population)
+                // This test can be expanded to verify mappings
+            }
+            ensureAllEventsConsumed()
         }
     }
 }

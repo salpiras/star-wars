@@ -59,10 +59,6 @@ fun PlanetListDestination(
     onPlanetSelected: (String) -> Unit
 ) {
 
-    LaunchedEffect(Unit) {
-        viewModel.loadData()
-    }
-
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val snackbarHostState = remember { SnackbarHostState() }

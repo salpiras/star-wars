@@ -13,12 +13,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -26,50 +21,63 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PlanetListViewModel @Inject constructor(
-    private val observePlanetsUseCase: ObservePlanetsUseCase,
+    observePlanetsUseCase: ObservePlanetsUseCase,
     private val getPlanetsUseCase: GetPlanetsUseCase
 ) : ViewModel() {
-
-    private val _refreshState: MutableSharedFlow<UiEvent> = MutableSharedFlow()
+    private val _refreshState = MutableSharedFlow<UiEvent>()
     val refreshState: SharedFlow<UiEvent> = _refreshState.asSharedFlow()
 
-    private val _uiState: MutableStateFlow<PlanetListUiState> =
-        MutableStateFlow(PlanetListUiState.Loading)
-    val uiState: StateFlow<PlanetListUiState> = _uiState.asStateFlow()
+    private val planetsFlow: StateFlow<List<Planet>> =
+        observePlanetsUseCase()
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = emptyList()
+            )
 
-    init {
-        observePlanets()
-    }
+    private val _refreshFailed = MutableStateFlow(false)
 
-    private fun observePlanets() {
-        observePlanetsUseCase.invoke()
-            .onEach { it ->
-                if (it.isNotEmpty()) {
-                    _uiState.value = PlanetListUiState.Loaded(data = it.toListItems())
-                }
-            }
-            .catch {
-                _uiState.value = PlanetListUiState.Error
-            }
-            .launchIn(viewModelScope)
-    }
+    val uiState: StateFlow<PlanetListUiState> = combine(
+        planetsFlow,
+        _refreshFailed
+    ) { planets, failed ->
+        when {
+            planets.isEmpty() && failed -> PlanetListUiState.Error
+            planets.isEmpty() -> PlanetListUiState.Loading
+            else -> PlanetListUiState.Loaded(data = planets.toListItems())
+        }
+    }.onStart { loadData() }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = PlanetListUiState.Loading
+        )
 
     fun loadData() {
         viewModelScope.launch {
             when (val result = getPlanetsUseCase()) {
+                is OpResult.Success -> {
+                    _refreshFailed.value = false
+                }
+
                 is OpResult.Error -> {
-                    if (uiState.value !is PlanetListUiState.Loaded) {
-                        _uiState.value = PlanetListUiState.Error
+                    if (planetsFlow.value.isEmpty()) {
+                        _refreshFailed.value = true
                     } else {
                         _refreshState.emit(UiEvent.RefreshError(result.message))
                     }
                 }
-
-                else -> {}
             }
         }
     }
 }
+
+/**
+ * Mappings between the model layer and the UI layer classes. This is done to achieve separations
+ * of concerns and not need to tweak UI models if we want to change data in the model layer.
+ * If they become more complex, usually a mapper class is injected to the viewmodel to increase
+ * testability.
+ */
 
 private fun Planet.toListItem(): PlanetUiItem =
     PlanetUiItem(

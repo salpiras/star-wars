@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -54,6 +56,9 @@ fun PlanetView(planet: PlanetUiOverview) {
             ),
             modifier = Modifier
                 .fillMaxSize()
+                // Quick fix for landscape mode usability.
+                // Usually in prod apps another layout is provided.
+                .verticalScroll(state = rememberScrollState())
                 .padding(horizontal = 16.dp)
         ) {
             Box(
