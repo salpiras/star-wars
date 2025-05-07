@@ -69,8 +69,8 @@ class PlanetListScreenTest {
                     )
                 }
             }
-            composeTestRule.onNodeWithText(fakePlanets[0].name).assertIsDisplayed()
-            composeTestRule.onNodeWithText(fakePlanets[1].name).assertIsDisplayed()
+            onNodeWithText(fakePlanets[0].name).assertIsDisplayed()
+            onNodeWithText(fakePlanets[1].name).assertIsDisplayed()
         }
     }
 
@@ -86,7 +86,7 @@ class PlanetListScreenTest {
                     )
                 }
             }
-            composeTestRule.onNodeWithText(fakePlanets[0].name).performClick()
+            onNodeWithText(fakePlanets[0].name).performClick()
             assertEquals(fakePlanets[0].uid, clickedId)
         }
     }
