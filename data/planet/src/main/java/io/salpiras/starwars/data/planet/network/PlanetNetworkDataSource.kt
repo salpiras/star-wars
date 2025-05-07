@@ -1,7 +1,6 @@
 package io.salpiras.starwars.data.planet.network
 
 import io.salpiras.starwars.core.model.Climate
-import io.salpiras.starwars.core.model.Diameter
 import io.salpiras.starwars.core.model.Planet
 import io.salpiras.starwars.core.model.Terrain
 import io.salpiras.starwars.data.planet.network.dto.PlanetDto

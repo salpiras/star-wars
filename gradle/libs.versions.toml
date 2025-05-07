@@ -94,7 +94,8 @@ androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx",
 
 # Testing libraries
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
-mock = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
 
 #Lottie compose
 lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottieCompose" }

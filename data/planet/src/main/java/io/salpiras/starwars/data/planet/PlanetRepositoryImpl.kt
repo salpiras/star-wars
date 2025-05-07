@@ -1,6 +1,5 @@
 package io.salpiras.starwars.data.planet
 
-import android.util.Log
 import io.salpiras.starwars.core.domain.repository.PlanetRepository
 import io.salpiras.starwars.core.model.OpResult
 import io.salpiras.starwars.core.model.Planet
