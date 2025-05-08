@@ -32,7 +32,6 @@ enum class Terrain {
          * Parse a raw API terrain string (e.g. "grasslands, mountains")
          * into the corresponding set of Terrain enums.
          */
-        // TODO: this might be just done by the mapper data -> model.
         fun parseAll(raw: String): Set<Terrain> =
             raw.split(',')
                 .map { it.trim().replace(' ', '_').uppercase() }

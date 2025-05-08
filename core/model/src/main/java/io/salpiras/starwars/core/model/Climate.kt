@@ -20,7 +20,6 @@ enum class Climate {
          * Parse a raw API climate string (e.g. “temperate, tropical”)
          * into a set of Climate values.
          */
-        // TODO: this might be just done by the mapper data -> model.
         fun parseAll(raw: String): Set<Climate> =
             raw.split(',')
                 .map { it.trim().replace(' ', '_') }
