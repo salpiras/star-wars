@@ -30,6 +30,7 @@ mockk = "1.14.0"
 gson = "2.11.0"
 javaxInject = "1"
 lottieCompose = "5.2.0"
+moduleGraph = "2.8.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -108,3 +109,4 @@ jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrai
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+module-graph = { id = "com.jraska.module.graph.assertion", version.ref = "moduleGraph" }
