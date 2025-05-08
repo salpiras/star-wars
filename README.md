@@ -69,11 +69,14 @@ To run tests:
 
 ```bash
 ./gradlew test
-./gradlew connectedAndroidTest
+./gradlew \
+    :feature:planet-list:connectedAndroidTest \
+    :feature:planet-detail:connectedAndroidTest
 ```
 
 ## 🔘 Future improvements / TODOs
 
+- [ ] Sanitise build scripts with a build-logic module
 - [ ] Expand tests suite
 - [ ] Add Room persistency
 - [ ] Return all pages of the API with infinite scrolling
