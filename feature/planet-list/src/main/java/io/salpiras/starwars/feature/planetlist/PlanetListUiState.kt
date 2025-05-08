@@ -1,6 +1,6 @@
 package io.salpiras.starwars.feature.planetlist
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 
 sealed interface PlanetListUiState {
     data object Loading : PlanetListUiState
@@ -14,7 +14,7 @@ sealed interface UiEvent {
     data class RefreshError(val message: String?) : UiEvent
 }
 
-@Stable
+@Immutable
 data class PlanetUiItem(
     val uid: String,
     val name: String,
