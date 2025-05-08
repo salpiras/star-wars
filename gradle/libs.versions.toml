@@ -11,7 +11,6 @@ composeBom = "2025.04.01"
 ktlint = "12.2.0"
 jetbrainsKotlinJvm = "2.1.20"
 hilt = "2.56.2"
-hiltExt = "1.2.0"
 ksp = "2.1.20-2.0.0"
 room = "2.7.1"
 retrofit = "2.11.0"
@@ -56,7 +55,6 @@ hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref
 hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "hilt" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
-hilt-ext-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltExt" }
 
 # KSP
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }

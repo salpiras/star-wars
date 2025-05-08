@@ -55,7 +55,6 @@ ktlint {
 }
 
 dependencies {
-    ksp(libs.hilt.ext.compiler)
     ksp(libs.hilt.compiler)
 
     implementation(libs.androidx.core.ktx)
