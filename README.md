@@ -80,4 +80,4 @@ To run tests:
 - [ ] Expand tests suite
 - [ ] Add Room persistency
 - [ ] Return all pages of the API with infinite scrolling
-- [ ] Add colors to the team to style it in Star Wars fashion
+- [ ] Add colors to the theme to style it in Star Wars fashion
